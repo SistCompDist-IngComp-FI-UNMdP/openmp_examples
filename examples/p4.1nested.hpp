@@ -67,8 +67,8 @@ void phello_nested_named( const std::string && name)
 
 void phello_nested()
 {
-    /*omp_set_nested(0);
-    phello_nested_named("nested descatived");*/
+    omp_set_nested(0);
+    phello_nested_named("nested descatived");
 
     omp_set_nested(1);
     phello_nested_named("nested actived");

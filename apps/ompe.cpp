@@ -21,7 +21,7 @@
 #include "../examples/p7task.hpp"
 #include "../examples/p8sin_integration.hpp"
 #include "../examples/pproducer_consumer.hpp"*/
-//#include "../examples/p4for_single_master.hpp"
+#include "../examples/p4for_single_master.hpp"
 #include "../examples/p4.2nested.hpp"
 //#include "../examples/pwrapper.hpp"
 
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
             loader(ptask),
             loader(psin_integration),
             loader(pproducer_consumer)*/
-            //loader(p4for_single_master),
+            loader(p4for_single_master),
             loader(pnested_compare),
             //loader(pwrapper)
             loader(pbig_factorial_nested)

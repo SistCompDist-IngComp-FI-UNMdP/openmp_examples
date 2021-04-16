@@ -121,14 +121,14 @@ public:
         parent      { parent }
     {
 #ifdef omp_log_test
-        std::cout << "{+" << num << "+}" << std::endl;
+        std::cerr << "{+" << num << "+}" << std::endl;
 #endif
     }
 
     ~thread()
     {
 #ifdef omp_log_test
-        std::cout << "{-" << num << "-}" << std::endl;
+        std::cerr << "{-" << num << "-}" << std::endl;
 #endif
     }
 
@@ -816,9 +816,9 @@ void show(std::ostream & os, const vec<event> &events)
                     os      << thv;
                     smark   << "*";
                     smsg    << "fork";
-                    #ifdef omp_log_test
-                    vis_dimensions(event.data_team->get_dimensions(), std::cout);
-                    #endif
+#ifdef omp_log_test
+                    vis_dimensions(event.data_team->get_dimensions(), std::cerr);
+ #endif
                 }
                     break;
                 case event_t::join :
@@ -868,7 +868,7 @@ void show(std::ostream & os, const vec<event> &events)
                     break;
             }
 #ifdef omp_log_test
-            std::cout << *th;
+            std::cerr << *th;
 #endif
             os << smark.str() << "> " << vid << " ~" << smsg.str() << "\n";
 
@@ -881,7 +881,7 @@ void show(std::ostream & os, const vec<event> &events)
         }
 #ifdef omp_log_test
         else
-            std::cout << "thread don't found! id: " << vis_id(id) << std::endl;
+            std::cerr << "thread don't found! id: " << vis_id(id) << std::endl;
 #endif
     }
 }
@@ -1003,7 +1003,7 @@ class thread_log {
             this->vincule_to_team(root_team);
             logger.begin(id, root_team);
 #ifdef omp_log_test
-            std::cout << "havent parent! @" <<
+            std::cerr << "havent parent! @" <<
                          this->get_mem_id() <<
                          "{" << vis_id(this->get_id()) << "}" <<
                          std::endl;
@@ -1015,7 +1015,7 @@ class thread_log {
             id.push_front( num );
             parent->registrate_child( *this );
 #ifdef omp_log_test
-            std::cout << "parent, registrate child! @" <<
+            std::cerr << "parent, registrate child! @" <<
                          parent->get_mem_id() <<
                          "{" << vis_id(parent->get_id()) << "} -> @" <<
                          this->get_mem_id() <<
@@ -1320,7 +1320,7 @@ protected:
 #ifdef omp_log_test_logging
         #pragma omp critical
         {
-           std::cout << "operator<< @" <<
+           std::cerr << "operator<< @" <<
                      sm.th_log.get_mem_id() <<
                      "{" << vis_id(sm.th_log.get_id()) << "}" <<
                      " << " << t <<
@@ -1336,7 +1336,7 @@ protected:
 #ifdef omp_log_test_logging
         #pragma omp critical
         {
-            std::cout << "operator<< @" <<
+            std::cerr << "operator<< @" <<
                          sm.th_log.get_mem_id() <<
                          "{" << vis_id(sm.th_log.get_id()) << "}" <<
                          " << std::endl" <<
@@ -1445,18 +1445,18 @@ public:
 }
 
 
-#define omp_log_inic_named(name)                \
+#define omp_log_inic_named(name)                                        \
 omp_log::stream_logger name(omp_log::is_critical::ENABLE)
 
-#define omp_log_inic_parented_named(name)       \
-auto &parent = name;                            \
+#define omp_log_inic_parented_named(name)                               \
+auto &parent = name;                                                    \
 omp_log::stream_logger name( omp_log::is_critical::ENABLE, parent )
 
-#define omp_log_inic_parented_mem_id_named(name, ptr)    \
-auto &parent = name;                                    \
+#define omp_log_inic_parented_mem_id_named(name, ptr)                           \
+auto &parent = name;                                                            \
 auto &name = omp_log::stream_logger_register::get_stream_logger(parent, ptr)
 
-#define omp_log_end_parented_named(name) \
+#define omp_log_end_parented_named(name)                                                                        \
 omp_log::stream_logger_register::remove_stream_loggers( name.get_th_log().get_mem_id_stream_logger_childs() )
 
 #define omp_log_inic()              \
@@ -1465,13 +1465,25 @@ omp_log_inic_named(omp_log)
 #define omp_log_inic_parented()     \
 omp_log_inic_parented_named(omp_log)
 
+
+/*#define omp_log_parallel(block) \
+{                               \
+    omp_log_inic_parented();    \
+        block                   \
+}*/
+
+
 #define omp_log_inic_for(ptr)     \
 omp_log_inic_parented_mem_id_named(omp_log, ptr)
 
 #define omp_log_end_for()           \
 omp_log_end_parented_named(omp_log)
 
-/*#define omp_log_inic_for(value) \
-omp_log_inic_for_named(value, omp_log)*/
-
+/*#define omp_log_for_block(mem_id, block)    \
+{                                           \
+    omp_log_inic_for(mem_id);               \
+        block                               \
+}                                           \
+omp_log_end_for();
+*/
 
