@@ -17,9 +17,8 @@ void p4for_single_master()
             omp_log_inic_parented();
 
             for(int i=0; i < rep; i++)
-                omp_log << "parallel " << i << std::endl;
+                omp_log << "simple for " << i << std::endl;
 
-            
             #pragma omp parallel num_threads(2)
             {
                 omp_log_inic_parented();
